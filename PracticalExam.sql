@@ -26,6 +26,7 @@ foreign key(appointment_id) references Appointment(appointment_id),
 treatment_name varchar(20),
 treatment_cost int)
 
+---insert some values to test
 insert into Patients(patient_id,patient_name, patient_lastname) values
 (1, 'Claude', 'Baker'),(2, 'Emilia', 'Gomez'),(3,'Lawrence', 'Middleton'),(4,'Sophia', 'Hensley')
 insert into Doctors(doctor_id, doctor_name, doctor_lastname) values
@@ -33,7 +34,7 @@ insert into Doctors(doctor_id, doctor_name, doctor_lastname) values
 insert into Treatment(appointment_id, treatment_cost) values
 (1, 500), (2, 1000), (3, 100)
 
-
+---procedure that receives as imput a patient, a doctor, a datetime and a status. If there is no match in Appointments, it creates it. If there is a match, it updates datetime and status.
 create procedure create_appt @apptid int, @patientid int, @doctorid int, @appttime datetime, @stat varchar(20)
 AS
 BEGIN
@@ -49,6 +50,7 @@ exec create_appt 3, 2, 11, '2025-01-02T10:00:00', 'Scheduled'
 
 select * from Appointment
 
+---view that shows the patients with the most expensive treatment
 create view show_patients
 AS
 	select a.patient_id, t.treatment_cost from Appointment a inner join Treatment t on a.appointment_id=t.appointment_id
@@ -56,6 +58,7 @@ AS
 
 select * from show_patients
 
+---function that lists doctos who have handled at least N appointments, N being given by user
 create function list_doctors(@N int)
 returns table as
 	return(select d.doctor_id, d.doctor_name, count(d.doctor_id) total from Doctors d inner join Appointment a on d.doctor_id=a.doctor_id
